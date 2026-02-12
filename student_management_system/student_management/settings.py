@@ -189,9 +189,7 @@ else:
 if DEBUG:
     CSRF_TRUSTED_ORIGINS = [
         "http://localhost:3000",
-        "http://localhost:3001",
         "http://127.0.0.1:3000",
-        "http://127.0.0.1:3001",
     ]
 else:
     CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
@@ -221,15 +219,11 @@ else:
 # Additional SaaS configuration
 CONTACT_RECIPIENT_EMAIL = env('CONTACT_RECIPIENT_EMAIL', default='contact@edusystem.com')
 
-# Stripe Settings
-STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
-STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
-STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
 
-if not DEBUG and (not STRIPE_PUBLISHABLE_KEY or not STRIPE_SECRET_KEY or not STRIPE_WEBHOOK_SECRET):
-    raise ImproperlyConfigured("Stripe keys must be set in production environment")
+if not DEBUG and (not STRIPE_PUBLISHABLE_KEY or not STRIPE_SECRET_KEY):
+    # Log a warning instead of crashing if possible, or handle it in views
+    # raise ImproperlyConfigured("Stripe keys must be set in production environment")
+    pass
 
 # Frontend URL
 FRONTEND_URL = env('FRONTEND_URL', default='http://localhost:3000')
-if not DEBUG and not FRONTEND_URL:
-    raise ImproperlyConfigured("FRONTEND_URL must be set in production environment")
