@@ -16,5 +16,3 @@ services:
         value: false
       - key: ALLOWED_HOSTS
         value: '*'
-      - key: DATABASE_URL
-        placeholder: "Enter your Neon.tech connection string here"
