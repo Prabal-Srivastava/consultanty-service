@@ -224,30 +224,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true)
       const response = await apiClient.post('auth/register/', userData)
       
-      const { access, refresh, user } = response.data
-      
-      if (access && refresh) {
-        // Automatic login after successful registration
-        localStorage.setItem('access_token', access)
-        localStorage.setItem('refresh_token', refresh)
-        
-        document.cookie = `auth_token=${access}; path=/; max-age=86400; SameSite=Lax`
-        document.cookie = `user_type=${user.user_type}; path=/; max-age=86400; SameSite=Lax`
-        
-        setUser(user)
-        toast.success('Registration successful! You are now logged in.')
-        
-        // Redirect to dashboard
-        let targetPath = '/dashboard'
-        if (user.user_type === 'student') targetPath = '/dashboard/student'
-        else if (user.user_type === 'tutor') targetPath = '/dashboard/tutor'
-        else if (user.user_type === 'admin') targetPath = '/dashboard/admin'
-        
-        router.push(targetPath)
-      } else {
-        toast.success('Registration successful! Please login.')
-        router.push('/login')
-      }
+      // The user wants to be directed to login after registration
+      toast.success('Registration successful! Please login with your credentials.')
+      router.push('/login')
     } catch (error: any) {
       setLoading(false)
       console.error('Registration error:', error.response?.data || error.message)

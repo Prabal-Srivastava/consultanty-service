@@ -54,15 +54,23 @@ class LoginSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if username_or_email and password:
+            print(f"Attempting login for: {username_or_email}")
             # Try to authenticate with username
             user = authenticate(request=self.context.get('request'), username=username_or_email, password=password)
             
             # If failed, try to find user by email and authenticate with their username
             if not user:
+                print(f"Username authentication failed, trying email...")
                 try:
                     user_obj = User.objects.get(email=username_or_email)
+                    print(f"Found user by email: {user_obj.username}")
                     user = authenticate(request=self.context.get('request'), username=user_obj.username, password=password)
+                    if user:
+                        print("Email authentication successful")
+                    else:
+                        print("Email authentication failed with found user's username")
                 except (User.DoesNotExist, User.MultipleObjectsReturned):
+                    print(f"No user found with email: {username_or_email}")
                     user = None
 
             if not user:
