@@ -219,20 +219,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
- const register = async (userData: RegisterData) => {
+  const register = async (userData: RegisterData) => {
     try {
       setLoading(true)
       const response = await apiClient.post('auth/register/', userData)
-      // Store email in localStorage for verification purposes
-      localStorage.setItem('verificationEmail', userData.email)
-      toast.success('Registration successful! Please check your email for verification.')
-      router.push('/login')
+      
+      const { access, refresh, user } = response.data
+      
+      if (access && refresh) {
+        // Automatic login after successful registration
+        localStorage.setItem('access_token', access)
+        localStorage.setItem('refresh_token', refresh)
+        
+        document.cookie = `auth_token=${access}; path=/; max-age=86400; SameSite=Lax`
+        document.cookie = `user_type=${user.user_type}; path=/; max-age=86400; SameSite=Lax`
+        
+        setUser(user)
+        toast.success('Registration successful! You are now logged in.')
+        
+        // Redirect to dashboard
+        let targetPath = '/dashboard'
+        if (user.user_type === 'student') targetPath = '/dashboard/student'
+        else if (user.user_type === 'tutor') targetPath = '/dashboard/tutor'
+        else if (user.user_type === 'admin') targetPath = '/dashboard/admin'
+        
+        router.push(targetPath)
+      } else {
+        toast.success('Registration successful! Please login.')
+        router.push('/login')
+      }
     } catch (error: any) {
+      console.error('Registration error:', error.response?.data)
       const errors = error.response?.data || {}
-      Object.keys(errors).forEach(key => {
-        toast.error(`${key}: ${errors[key][0]}`)
-      })
+      
+      if (typeof errors === 'string') {
+        toast.error(errors)
+      } else {
+        Object.keys(errors).forEach(key => {
+          const errorMsg = errors[key]
+          const message = Array.isArray(errorMsg) ? errorMsg[0] : errorMsg
+          if (key !== 'message') {
+            toast.error(`${key}: ${message}`)
+          }
+        })
+      }
       throw error
+    } finally {
+      setLoading(false)
     }
   }
 
