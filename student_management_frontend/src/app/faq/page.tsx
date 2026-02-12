@@ -11,6 +11,13 @@ interface FAQ {
   answer: string;
 }
 
+const FALLBACK_FAQS: FAQ[] = [
+  { id: 1, question: 'What is Arpit Consultancy?', answer: 'Arpit Consultancy is a career transformation platform providing industry-aligned training, guaranteed placements, and direct mentorship.' },
+  { id: 2, question: 'Is placement guaranteed?', answer: 'Yes, we provide placement guarantees for our premium training programs, backed by our extensive network of hiring partners.' },
+  { id: 3, question: 'Who is the founder?', answer: 'The consultancy was founded by Arpit Srivastava, a Software Engineer at IBM with a passion for career mentorship.' },
+  { id: 4, question: 'Can I get one-on-one mentorship?', answer: 'Absolutely! Our mentorship program is a core part of our offering, connecting you directly with industry experts.' },
+];
+
 const FAQPage = () => {
   const [faqs, setFaqs] = useState<FAQ[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,16 +28,14 @@ const FAQPage = () => {
     const fetchFAQs = async () => {
       try {
         const response = await apiClient.get('consultancy/faqs/');
-        setFaqs(response.data);
+        if (response.data && response.data.length > 0) {
+          setFaqs(response.data);
+        } else {
+          setFaqs(FALLBACK_FAQS);
+        }
       } catch (error) {
         console.error('Error fetching FAQs:', error);
-        // Fallback FAQs if API fails or is empty
-        setFaqs([
-          { id: 1, question: 'What is Arpit Consultancy?', answer: 'Arpit Consultancy is a career transformation platform providing industry-aligned training, guaranteed placements, and direct mentorship.' },
-          { id: 2, question: 'Is placement guaranteed?', answer: 'Yes, we provide placement guarantees for our premium training programs, backed by our extensive network of hiring partners.' },
-          { id: 3, question: 'Who is the founder?', answer: 'The consultancy was founded by Arpit Srivastava, a Software Engineer at IBM with a passion for career mentorship.' },
-          { id: 4, question: 'Can I get one-on-one mentorship?', answer: 'Absolutely! Our mentorship program is a core part of our offering, connecting you directly with industry experts.' },
-        ]);
+        setFaqs(FALLBACK_FAQS);
       } finally {
         setLoading(false);
       }

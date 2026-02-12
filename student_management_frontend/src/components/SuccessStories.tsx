@@ -15,6 +15,44 @@ interface Story {
   is_job_placement: boolean;
 }
 
+const FALLBACK_STORIES: Story[] = [
+  {
+    id: 1,
+    name: 'Priya Sharma',
+    role: 'Process Developer at Genpact',
+    story: 'The R2R training and interview prep at Arpit Consultancy helped me land my role at Genpact. The domain knowledge they shared was invaluable.',
+    is_job_placement: true
+  },
+  {
+    id: 2,
+    name: 'Rahul Verma',
+    role: 'Record to Report Executive at EXL',
+    story: 'I gained deep insights into financial reporting and general ledger accounting. This practical knowledge was the key to my success at EXL.',
+    is_job_placement: true
+  },
+  {
+    id: 3,
+    name: 'Sneha Patel',
+    role: 'FP&A Analyst at Accenture',
+    story: 'The financial planning and analysis module was comprehensive. It gave me the confidence to handle complex budgeting tasks in my current role.',
+    is_job_placement: true
+  },
+  {
+    id: 4,
+    name: 'Ankit Kumar',
+    role: 'Record to Report Executive at Infosys',
+    story: 'From journal entries to financial statements, the end-to-end process training made me industry-ready for my career at Infosys.',
+    is_job_placement: true
+  },
+  {
+    id: 5,
+    name: 'Vikram Singh',
+    role: 'Financial Analyst at Dyson',
+    story: 'The advanced Excel and financial modeling skills I learned here were exactly what I needed to secure my role at Dyson. Truly professional training.',
+    is_job_placement: true
+  }
+];
+
 const SuccessStories = () => {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,47 +61,14 @@ const SuccessStories = () => {
     const fetchStories = async () => {
       try {
         const response = await apiClient.get('consultancy/success-stories/');
-        setStories(response.data);
+        if (response.data && response.data.length > 0) {
+          setStories(response.data);
+        } else {
+          setStories(FALLBACK_STORIES);
+        }
       } catch (error) {
         console.error('Error fetching success stories:', error);
-        // Fallback stories
-        setStories([
-          {
-            id: 1,
-            name: 'Priya Sharma',
-            role: 'Process Developer at Genpact',
-            story: 'The R2R training and interview prep at Arpit Consultancy helped me land my role at Genpact. The domain knowledge they shared was invaluable.',
-            is_job_placement: true
-          },
-          {
-            id: 2,
-            name: 'Rahul Verma',
-            role: 'Record to Report Executive at EXL',
-            story: 'I gained deep insights into financial reporting and general ledger accounting. This practical knowledge was the key to my success at EXL.',
-            is_job_placement: true
-          },
-          {
-            id: 3,
-            name: 'Sneha Patel',
-            role: 'FP&A Analyst at Accenture',
-            story: 'The financial planning and analysis module was comprehensive. It gave me the confidence to handle complex budgeting tasks in my current role.',
-            is_job_placement: true
-          },
-          {
-            id: 4,
-            name: 'Ankit Kumar',
-            role: 'Record to Report Executive at Infosys',
-            story: 'From journal entries to financial statements, the end-to-end process training made me industry-ready for my career at Infosys.',
-            is_job_placement: true
-          },
-          {
-            id: 5,
-            name: 'Vikram Singh',
-            role: 'Financial Analyst at Dyson',
-            story: 'The advanced Excel and financial modeling skills I learned here were exactly what I needed to secure my role at Dyson. Truly professional training.',
-            is_job_placement: true
-          }
-        ]);
+        setStories(FALLBACK_STORIES);
       } finally {
         setLoading(false);
       }
