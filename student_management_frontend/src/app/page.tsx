@@ -401,7 +401,8 @@ export default function Home() {
                 <li><Link href="/help-center" className="hover:text-white transition-colors flex items-center"><FiChevronRight className="mr-1 text-[10px]" /> Help Center</Link></li>
                 <li><Link href="/contact" className="hover:text-white transition-colors flex items-center"><FiChevronRight className="mr-1 text-[10px]" /> Contact</Link></li>
                 <li><Link href="/faq" className="hover:text-white transition-colors flex items-center"><FiChevronRight className="mr-1 text-[10px]" /> FAQ</Link></li>
-                <li className="mt-2 text-blue-400 font-medium">arpitshivamsrivastava@gmail.com</li>
+                <li className="mt-2 text-blue-400 font-medium">+91 7522020046</li>
+                <li className="mt-1 text-blue-400 font-medium">arpitshivamsrivastava@gmail.com</li>
               </ul>
             </div>
             

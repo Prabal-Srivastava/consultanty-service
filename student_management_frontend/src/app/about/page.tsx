@@ -96,15 +96,10 @@ const AboutPage = () => {
                 <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">Founder & Visionary</span>
               </div>
               
-              <div className="flex items-center space-x-2 text-gray-600 mb-6">
-                <FaBriefcase className="text-blue-500" />
-                <span className="font-medium">Software Engineer at IBM</span>
-              </div>
-              
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
                 With a passion for mentorship and a deep understanding of the global tech industry, 
                 Arpit Srivastava founded this consultancy to provide students with the same 
-                opportunities and guidance that led him to a successful career at IBM. 
+                opportunities and guidance that led him to a successful career. 
                 His vision is to ensure that no talent goes unrecognized due to a lack of guidance.
               </p>
               

@@ -31,23 +31,30 @@ const SuccessStories = () => {
           {
             id: 1,
             name: 'Priya Sharma',
-            role: 'Software Engineer at Microsoft',
+            role: 'Software Engineer at EXL',
             story: 'The mentorship at Arpit Consultancy was life-changing. They guided me through every step of the interview process.',
             is_job_placement: true
           },
           {
             id: 2,
             name: 'Rahul Verma',
-            role: 'Data Analyst at Amazon',
+            role: 'Data Analyst at DXC',
             story: 'The practical projects helped me build a portfolio that stood out to recruiters. Highly recommend their programs!',
             is_job_placement: true
           },
           {
             id: 3,
             name: 'Sneha Patel',
-            role: 'Full Stack Developer',
+            role: 'Full Stack Developer at Genpact',
             story: 'Career transformation is real. I went from zero coding knowledge to a professional developer in 6 months.',
-            is_job_placement: false
+            is_job_placement: true
+          },
+          {
+            id: 4,
+            name: 'Ankit Kumar',
+            role: 'Cloud Engineer at IBM',
+            story: 'The training and interview prep were top-notch. I secured my dream role thanks to the team.',
+            is_job_placement: true
           }
         ]);
       } finally {
