@@ -164,7 +164,11 @@ SECURE_SSL_REDIRECT = env.bool('SECURE_SSL_REDIRECT', default=False)
 SESSION_COOKIE_SECURE = env.bool('SESSION_COOKIE_SECURE', default=False)
 CSRF_COOKIE_SECURE = env.bool('CSRF_COOKIE_SECURE', default=False)
 
-APPEND_SLASH = False
+# CSRF Trusted Origins (Required for Django 4.0+)
+CSRF_TRUSTED_ORIGINS = [
+    "https://consultanty-service.vercel.app",
+    "https://student-management-backend-8s4c.onrender.com",
+]
 
 # Simple JWT Configuration
 SIMPLE_JWT = {
@@ -198,7 +202,7 @@ else:
     CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
         "https://consultanty-service.vercel.app",
     ])
-    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOW_ALL_ORIGINS = True  # Set to True to resolve CORS issues immediately
 
 # CSRF settings
 if DEBUG:

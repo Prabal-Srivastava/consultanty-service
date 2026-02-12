@@ -10,11 +10,16 @@ const getFullApiUrl = (path: string) => {
   
   if (API_BASE_URL.startsWith('http')) {
     const base = API_BASE_URL.endsWith('/') ? API_BASE_URL : `${API_BASE_URL}/`;
-    // If the path already includes 'api/', don't add it again
-    if (cleanPath.startsWith('api/')) {
-      return `${base}${cleanPath}`;
+    // Ensure the path ends with a slash for Django compatibility
+    let finalPath = cleanPath;
+    if (!finalPath.endsWith('/') && !finalPath.includes('?')) {
+      finalPath = `${finalPath}/`;
     }
-    return `${base}api/${cleanPath}`;
+
+    if (finalPath.startsWith('api/')) {
+      return `${base}${finalPath}`;
+    }
+    return `${base}api/${finalPath}`;
   }
   
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
