@@ -1,0 +1,21 @@
+# Root .gitignore to ignore sensitive or temporary files across the project
+
+# Common OS files
+.DS_Store
+Thumbs.db
+
+# Common IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Common Environment files
+.env
+.env.*
+!.env.example
+
+# Root level build or temp artifacts
+dist/
+build/
+*.log
