@@ -249,20 +249,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         router.push('/login')
       }
     } catch (error: any) {
-      console.error('Registration error:', error.response?.data)
-      const errors = error.response?.data || {}
+      setLoading(false)
+      console.error('Registration error:', error.response?.data || error.message)
       
-      if (typeof errors === 'string') {
-        toast.error(errors)
-      } else {
-        Object.keys(errors).forEach(key => {
-          const errorMsg = errors[key]
-          const message = Array.isArray(errorMsg) ? errorMsg[0] : errorMsg
-          if (key !== 'message') {
-            toast.error(`${key}: ${message}`)
-          }
-        })
+      let errorMessage = 'Registration failed'
+      
+      if (error.response?.data) {
+        const errors = error.response.data
+        if (typeof errors === 'string') {
+          errorMessage = errors
+        } else if (errors.detail) {
+          errorMessage = errors.detail
+        } else if (typeof errors === 'object') {
+          // Flatten field errors: { "username": ["Already exists"] } -> "username: Already exists"
+          const errorList = Object.keys(errors).map(key => {
+            const val = errors[key]
+            const msg = Array.isArray(val) ? val[0] : val
+            return `${key}: ${msg}`
+          })
+          errorMessage = errorList.join(' | ')
+        }
+      } else if (error.message) {
+        errorMessage = error.message
       }
+      
+      toast.error(errorMessage)
       throw error
     } finally {
       setLoading(false)
