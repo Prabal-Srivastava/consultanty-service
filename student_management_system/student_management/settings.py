@@ -87,6 +87,12 @@ DATABASES = {
     )
 }
 
+# SSL for PostgreSQL (Required for Supabase/Neon)
+if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
+    DATABASES['default']['OPTIONS'] = {
+        'sslmode': 'require',
+    }
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
