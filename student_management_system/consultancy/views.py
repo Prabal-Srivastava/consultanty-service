@@ -309,7 +309,7 @@ def contact_us(request):
             message=email_message,
             from_email=email,  # Use sender's email as from_email
             recipient_list=[admin_email],  # Send to admin
-            fail_silently=False,
+            fail_silently=True,
         )
         
         return Response(

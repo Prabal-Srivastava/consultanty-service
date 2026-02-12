@@ -50,11 +50,20 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        username = attrs.get('username')
+        username_or_email = attrs.get('username')
         password = attrs.get('password')
 
-        if username and password:
-            user = authenticate(request=self.context.get('request'), username=username, password=password)
+        if username_or_email and password:
+            # Try to authenticate with username
+            user = authenticate(request=self.context.get('request'), username=username_or_email, password=password)
+            
+            # If failed, try to find user by email and authenticate with their username
+            if not user:
+                try:
+                    user_obj = User.objects.get(email=username_or_email)
+                    user = authenticate(request=self.context.get('request'), username=user_obj.username, password=password)
+                except (User.DoesNotExist, User.MultipleObjectsReturned):
+                    user = None
 
             if not user:
                 msg = 'Unable to log in with provided credentials.'

@@ -99,7 +99,7 @@ def send_verification_email(user, token):
             settings.DEFAULT_FROM_EMAIL,
             [user.email],
             html_message=html_message,
-            fail_silently=False,
+            fail_silently=True,
         )
     except Exception as e:
         print(f"Error sending email: {e}")
