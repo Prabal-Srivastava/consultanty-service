@@ -8,7 +8,11 @@ from datetime import timedelta
 from courses.models import Subject, Course, Enrollment, CourseMaterial
 from quizzes.models import Quiz, Question, Choice
 from interviews.models import InterviewSlot, InterviewBooking
-from chat.models import Room
+from consultancy.models import (
+    ConsultancyService, Organization, ConsultancyContract, 
+    StudentEnrollment, ConsultancyReport, ConsultancySession,
+    SuccessStory, FAQ
+)
 
 User = get_user_model()
 
@@ -191,5 +195,68 @@ class Command(BaseCommand):
                 )
                 if created:
                     room.participants.add(student, tutor)
+
+        # 4. Success Stories
+        self.stdout.write('Creating success stories...')
+        stories_data = [
+            {
+                'name': 'Priya Sharma',
+                'role': 'Process Developer at Genpact',
+                'story': 'The R2R training and interview prep at Arpit Consultancy helped me land my role at Genpact. The domain knowledge they shared was invaluable.',
+                'is_job_placement': True
+            },
+            {
+                'name': 'Rahul Verma',
+                'role': 'Record to Report Executive at EXL',
+                'story': 'I gained deep insights into financial reporting and general ledger accounting. This practical knowledge was the key to my success at EXL.',
+                'is_job_placement': True
+            },
+            {
+                'name': 'Sneha Patel',
+                'role': 'FP&A Analyst at Accenture',
+                'story': 'The financial planning and analysis module was comprehensive. It gave me the confidence to handle complex budgeting tasks in my current role.',
+                'is_job_placement': True
+            },
+            {
+                'name': 'Ankit Kumar',
+                'role': 'Record to Report Executive at Infosys',
+                'story': 'From journal entries to financial statements, the end-to-end process training made me industry-ready for my career at Infosys.',
+                'is_job_placement': True
+            }
+        ]
+        for story_data in stories_data:
+            SuccessStory.objects.get_or_create(
+                name=story_data['name'],
+                defaults={
+                    'role': story_data['role'],
+                    'story': story_data['story'],
+                    'is_job_placement': story_data['is_job_placement']
+                }
+            )
+
+        # 5. FAQs
+        self.stdout.write('Creating FAQs...')
+        faqs_data = [
+            {
+                'question': 'What consultancy services do you offer?',
+                'answer': 'We offer B2B and B2C consultancy, including corporate training and individual career coaching.'
+            },
+            {
+                'question': 'How can I join a consultancy session?',
+                'answer': 'You can book a session through your student dashboard under the Consultancy section.'
+            },
+            {
+                'question': 'Are the training sessions recorded?',
+                'answer': 'Yes, all our live sessions are recorded and made available in your course materials.'
+            }
+        ]
+        for i, faq_data in enumerate(faqs_data):
+            FAQ.objects.get_or_create(
+                question=faq_data['question'],
+                defaults={
+                    'answer': faq_data['answer'],
+                    'order': i
+                }
+            )
 
         self.stdout.write(self.style.SUCCESS('Successfully seeded full database!'))

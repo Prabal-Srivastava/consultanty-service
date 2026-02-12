@@ -31,29 +31,29 @@ const SuccessStories = () => {
           {
             id: 1,
             name: 'Priya Sharma',
-            role: 'Software Engineer at EXL',
-            story: 'The mentorship at Arpit Consultancy was life-changing. They guided me through every step of the interview process.',
+            role: 'Process Developer at Genpact',
+            story: 'The R2R training and interview prep at Arpit Consultancy helped me land my role at Genpact. The domain knowledge they shared was invaluable.',
             is_job_placement: true
           },
           {
             id: 2,
             name: 'Rahul Verma',
-            role: 'Data Analyst at DXC',
-            story: 'The practical projects helped me build a portfolio that stood out to recruiters. Highly recommend their programs!',
+            role: 'Record to Report Executive at EXL',
+            story: 'I gained deep insights into financial reporting and general ledger accounting. This practical knowledge was the key to my success at EXL.',
             is_job_placement: true
           },
           {
             id: 3,
             name: 'Sneha Patel',
-            role: 'Full Stack Developer at Genpact',
-            story: 'Career transformation is real. I went from zero coding knowledge to a professional developer in 6 months.',
+            role: 'FP&A Analyst at Accenture',
+            story: 'The financial planning and analysis module was comprehensive. It gave me the confidence to handle complex budgeting tasks in my current role.',
             is_job_placement: true
           },
           {
             id: 4,
             name: 'Ankit Kumar',
-            role: 'Cloud Engineer at IBM',
-            story: 'The training and interview prep were top-notch. I secured my dream role thanks to the team.',
+            role: 'Record to Report Executive at Infosys',
+            story: 'From journal entries to financial statements, the end-to-end process training made me industry-ready for my career at Infosys.',
             is_job_placement: true
           }
         ]);
