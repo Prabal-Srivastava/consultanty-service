@@ -14,10 +14,15 @@ if os.path.exists(env_file):
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Allowed Hosts
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', '.vercel.app'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', '.vercel.app', '.onrender.com'])
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition
 INSTALLED_APPS = [
+    'daphne',  # Must be at the top for Channels
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -70,6 +75,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'student_management.wsgi.application'
+ASGI_APPLICATION = 'student_management.asgi.application'
 
 AUTH_USER_MODEL = 'accounts.User'
 
