@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "student_management/wsgi.py",
+      "src": "vercel_app.py",
       "use": "@vercel/python",
       "config": { "runtime": "python3.11" }
     }
@@ -14,7 +14,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "student_management/wsgi.py"
+      "dest": "vercel_app.py"
     }
   ]
 }
