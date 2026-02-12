@@ -20,6 +20,7 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
+from django.utils import timezone
 from . import views
 
 handler404 = 'student_management.views.custom_404'
@@ -47,7 +48,27 @@ def root_view(request):
         }
     })
 
+from django.db import connection
+
+def health_check(request):
+    """Deep health check that tests database connection"""
+    db_ok = False
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            db_ok = True
+    except Exception as e:
+        error_msg = str(e)
+        
+    return JsonResponse({
+        "status": "online" if db_ok else "degraded",
+        "database": "connected" if db_ok else "failed",
+        "error": error_msg if not db_ok else None,
+        "timestamp": timezone.now().isoformat()
+    }, status=200 if db_ok else 500)
+
 urlpatterns = [
+    path('health/', health_check),
     path('', root_view),
     path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),

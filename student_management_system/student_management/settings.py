@@ -45,9 +45,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,14 +83,15 @@ AUTH_USER_MODEL = 'accounts.User'
 DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=0  # Set to 0 for Supabase Transaction Pooler compatibility
+        conn_max_age=0,  # Required for Supabase Transaction Pooler
     )
 }
 
-# SSL for PostgreSQL (Required for Supabase/Neon)
-if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
+# Optimized PostgreSQL options for Supabase
+if DATABASES['default'].get('ENGINE') == 'django.db.backends.postgresql':
     DATABASES['default']['OPTIONS'] = {
         'sslmode': 'require',
+        'connect_timeout': 10,  # Fail faster if connection is stuck
     }
 
 # Password validation
@@ -194,21 +195,13 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_HTTPONLY = True
 
 # CORS Configuration
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
-
-if DEBUG:
-    CORS_ALLOWED_ORIGINS = [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:3001",
-    ]
-    CORS_ALLOW_ALL_ORIGINS = True
-else:
-    CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
-        "https://consultanty-service.vercel.app",
-    ])
-    CORS_ALLOW_ALL_ORIGINS = True  # Set to True to resolve CORS issues immediately
+CORS_ALLOWED_ORIGINS = [
+    "https://consultanty-service.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3001",
+]
 
 # CSRF settings
 if DEBUG:
