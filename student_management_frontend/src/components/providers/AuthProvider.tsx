@@ -120,9 +120,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter()
 
   useEffect(() => {
-    if (!API_BASE_URL || !API_BASE_URL.startsWith('http')) {
-      toast('Backend API URL is not configured. Using current origin.', { icon: '⚠️' })
-    }
     // Check if user is logged in on app start
     const token = localStorage.getItem('access_token')
     if (token) {
