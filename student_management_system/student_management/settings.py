@@ -211,7 +211,12 @@ if DEBUG:
         "http://127.0.0.1:3000",
     ]
 else:
-    CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+    # Combine the hardcoded origins with any from environment variables
+    env_csrf_origins = env.list('CSRF_TRUSTED_ORIGINS', default=[])
+    CSRF_TRUSTED_ORIGINS = [
+        "https://consultanty-service.vercel.app",
+        "https://student-management-backend-8s4c.onrender.com",
+    ] + env_csrf_origins
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
