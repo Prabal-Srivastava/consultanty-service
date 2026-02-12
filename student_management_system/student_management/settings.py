@@ -5,13 +5,13 @@ import environ
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 env = environ.Env()
 # Only read .env if it exists (useful for local development)
 env_file = os.path.join(BASE_DIR, '.env')
 if os.path.exists(env_file):
     environ.Env.read_env(env_file)
-
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Allowed Hosts
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1', '.vercel.app', '.onrender.com'])
