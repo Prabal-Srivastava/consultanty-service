@@ -43,33 +43,29 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 // Configure axios defaults
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://student-management-backend-8s4c.onrender.com'
+const API_ROOT = API_BASE_URL.endsWith('/') ? `${API_BASE_URL}api/` : `${API_BASE_URL}/api/`
 
 // Helper to get consistent API URLs
 const getApiUrl = (path: string) => {
   if (path.startsWith('http')) return path;
   
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  let cleanPath = path.startsWith('/') ? path.slice(1) : path;
   
-  if (API_BASE_URL.startsWith('http')) {
-    const base = API_BASE_URL.endsWith('/') ? API_BASE_URL : `${API_BASE_URL}/`;
-    
-    // Ensure the path ends with a slash for Django compatibility
-    let finalPath = cleanPath;
-    if (!finalPath.endsWith('/') && !finalPath.includes('?')) {
-      finalPath = `${finalPath}/`;
-    }
-
-    if (finalPath.startsWith('api/')) {
-      return `${base}${finalPath}`;
-    }
-    return `${base}api/${finalPath}`;
+  // Remove redundant 'api/' if it exists
+  if (cleanPath.startsWith('api/')) {
+    cleanPath = cleanPath.slice(4);
   }
   
-  // Relative path (standard Next.js behavior)
-  return path.startsWith('/') ? path : `/api/${path}`;
+  // Ensure the path ends with a slash for Django compatibility
+  let finalPath = cleanPath;
+  if (!finalPath.endsWith('/') && !finalPath.includes('?')) {
+    finalPath = `${finalPath}/`;
+  }
+
+  return `${API_ROOT}${finalPath}`;
 }
 
-axios.defaults.baseURL = API_BASE_URL
+axios.defaults.baseURL = API_ROOT
 
 // Add auth token to requests
 axios.interceptors.request.use((config) => {
@@ -194,12 +190,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false)
       let errorMessage = 'Login failed'
       
-      if (error.response?.data?.error) {
-        errorMessage = typeof error.response.data.error === 'object' 
-          ? JSON.stringify(error.response.data.error) 
-          : error.response.data.error
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message
+      console.error('Full login error response:', error.response?.data);
+      
+      if (error.response?.data) {
+        const data = error.response.data;
+        if (typeof data === 'string') {
+          errorMessage = data;
+        } else if (data.non_field_errors) {
+          errorMessage = Array.isArray(data.non_field_errors) ? data.non_field_errors[0] : data.non_field_errors;
+        } else if (data.error) {
+          errorMessage = typeof data.error === 'object' ? JSON.stringify(data.error) : data.error;
+        } else if (data.detail) {
+          errorMessage = data.detail;
+        } else {
+          // If it's a field error object, pick the first error
+          const firstKey = Object.keys(data)[0];
+          const firstError = data[firstKey];
+          errorMessage = `${firstKey}: ${Array.isArray(firstError) ? firstError[0] : firstError}`;
+        }
       } else if (error.message) {
         errorMessage = error.message
       }

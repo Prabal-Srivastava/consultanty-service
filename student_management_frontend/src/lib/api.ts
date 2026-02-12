@@ -1,38 +1,31 @@
 import axios from 'axios'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://student-management-backend-8s4c.onrender.com'
+const API_ROOT = API_BASE_URL.endsWith('/') ? `${API_BASE_URL}api/` : `${API_BASE_URL}/api/`
 
 // Helper to get consistent API URLs
 const getFullApiUrl = (path: string) => {
   if (path.startsWith('http')) return path;
   
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  let cleanPath = path.startsWith('/') ? path.slice(1) : path;
   
-  if (API_BASE_URL.startsWith('http')) {
-    const base = API_BASE_URL.endsWith('/') ? API_BASE_URL : `${API_BASE_URL}/`;
-    // Ensure the path ends with a slash for Django compatibility
-    let finalPath = cleanPath;
-    if (!finalPath.endsWith('/') && !finalPath.includes('?')) {
-      finalPath = `${finalPath}/`;
-    }
+  // Remove redundant 'api/' if it exists
+  if (cleanPath.startsWith('api/')) {
+    cleanPath = cleanPath.slice(4);
+  }
+  
+  // Ensure the path ends with a slash for Django compatibility
+  let finalPath = cleanPath;
+  if (!finalPath.endsWith('/') && !finalPath.includes('?')) {
+    finalPath = `${finalPath}/`;
+  }
 
-    if (finalPath.startsWith('api/')) {
-      return `${base}${finalPath}`;
-    }
-    return `${base}api/${finalPath}`;
-  }
-  
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  const targetPath = path.startsWith('/') ? path : `/api/${path}`;
-  if (origin) {
-    return `${origin}${targetPath}`;
-  }
-  return targetPath;
+  return `${API_ROOT}${finalPath}`;
 }
 
 // Create axios instance
 export const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_ROOT,
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
