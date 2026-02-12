@@ -3,7 +3,7 @@ services:
     name: student-management-backend
     runtime: python
     plan: free
-    rootDirectory: student_management_system
+    rootDir: student_management_system
     buildCommand: ./build.sh
     startCommand: daphne -b 0.0.0.0 -p $PORT student_management.asgi:application
     envVars:
