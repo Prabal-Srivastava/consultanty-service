@@ -69,8 +69,10 @@ def register(request):
         }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+import threading
+
 def send_verification_email(user, token):
-    """Send verification email to the user"""
+    """Send verification email to the user in a separate thread to prevent timeouts"""
     subject = 'Verify your email address'
     verification_url = f'{settings.FRONTEND_URL}/verify-email/{token}'
     
@@ -95,17 +97,21 @@ def send_verification_email(user, token):
     EduSystem Pro Team
     '''
     
-    try:
-        send_mail(
-            subject,
-            text_message,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            html_message=html_message,
-            fail_silently=True,
-        )
-    except Exception as e:
-        print(f"Error sending email: {e}")
+    def _send():
+        try:
+            send_mail(
+                subject,
+                text_message,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                html_message=html_message,
+                fail_silently=True,
+            )
+        except Exception as e:
+            print(f"Error sending email in thread: {e}")
+
+    # Start the email sending in a background thread
+    threading.Thread(target=_send).start()
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
@@ -167,14 +173,20 @@ def send_login_otp(request):
         expires_at=expires_at
     )
     
-    # Send email
-    send_mail(
-        'Login OTP',
-        f'Your OTP for login is: {otp}. It expires in 10 minutes.',
-        settings.DEFAULT_FROM_EMAIL,
-        [user.email],
-        fail_silently=True
-    )
+    # Send email in background
+    def _send_otp():
+        try:
+            send_mail(
+                'Login OTP',
+                f'Your OTP for login is: {otp}. It expires in 10 minutes.',
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=True
+            )
+        except Exception as e:
+            print(f"Error sending OTP email in thread: {e}")
+
+    threading.Thread(target=_send_otp).start()
     
     return Response({'message': 'OTP sent successfully'})
 

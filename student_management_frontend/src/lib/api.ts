@@ -35,7 +35,7 @@ const getFullApiUrl = (path: string) => {
 
 export const apiClient = axios.create({
   baseURL: API_ROOT,
-  timeout: 15000,
+  timeout: 30000, // Increased to 30s to handle slow cold starts and database connections
   headers: {
     'Content-Type': 'application/json',
   },
