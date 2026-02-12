@@ -31,7 +31,7 @@ function ResetPasswordContent() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/confirm-password-reset/`, {
+      const response = await axios.post('/auth/confirm-password-reset/', {
         token,
         new_password: password
       });

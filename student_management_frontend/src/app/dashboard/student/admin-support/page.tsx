@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { FiSettings, FiMail, FiSend, FiCheckCircle, FiArrowLeft, FiCreditCard, FiUser } from 'react-icons/fi';
 import { Button, Input } from '@/components';
 import Link from 'next/link';
-import axios from 'axios';
+import { apiClient } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 export default function AdminSupportPage() {
@@ -26,8 +26,7 @@ export default function AdminSupportPage() {
 
     setSending(true);
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
-      await axios.post(`${baseUrl}/consultancy/contact/`, {
+      await apiClient.post('/consultancy/contact/', {
         name: `${user?.first_name} ${user?.last_name}` || user?.username,
         email: user?.email,
         subject: `[Admin Support - ${category.toUpperCase()}] ${subject}`,

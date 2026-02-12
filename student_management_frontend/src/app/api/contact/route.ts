@@ -24,14 +24,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Forward the request to the backend API
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://student-management-backend-8s4c.onrender.com';
     
     // Construct the final URL for server-side fetch
-    let finalBaseUrl = baseUrl;
-    if (!baseUrl.startsWith('http')) {
+    let finalBaseUrl = backendUrl;
+    if (!backendUrl.startsWith('http')) {
       const host = headers().get('host') || 'localhost:3000';
       const protocol = host.includes('localhost') ? 'http' : 'https';
-      finalBaseUrl = `${protocol}://${host}${baseUrl}`;
+      finalBaseUrl = `${protocol}://${host}${backendUrl}`;
+    }
+    
+    // Ensure finalBaseUrl ends with /api/ if it's a remote server
+    if (finalBaseUrl.startsWith('http') && !finalBaseUrl.includes('/api')) {
+      finalBaseUrl = finalBaseUrl.endsWith('/') ? `${finalBaseUrl}api` : `${finalBaseUrl}/api`;
     }
     
     const response = await fetch(`${finalBaseUrl}/consultancy/contact/`, {

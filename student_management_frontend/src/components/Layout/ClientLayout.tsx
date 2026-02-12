@@ -15,9 +15,10 @@ export default function ClientLayout({
 }) {
   const { showModal, closeModal } = useExitIntent(5000)
   const [leadData, setLeadData] = useState<any>(null)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   const getApiUrl = (path: string) => {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://student-management-backend-8s4c.onrender.com'
     if (path.startsWith('http')) return path
     const cleanPath = path.startsWith('/') ? path.slice(1) : path
     if (API_BASE_URL.startsWith('http')) {

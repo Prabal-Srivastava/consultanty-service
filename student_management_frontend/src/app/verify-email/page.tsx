@@ -38,7 +38,7 @@ function VerifyEmailContent() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify-email/`, {
+      const response = await axios.post('/auth/verify-email/', {
         token: token || otp
       });
 
@@ -70,7 +70,7 @@ function VerifyEmailContent() {
         throw new Error('Email not found. Please register again.');
       }
 
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/resend-verification/`, {
+      const response = await axios.post('/auth/resend-verification/', {
         email
       });
 

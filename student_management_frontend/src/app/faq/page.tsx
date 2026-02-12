@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiChevronDown, FiChevronUp, FiSearch, FiHelpCircle } from 'react-icons/fi';
-import axios from 'axios';
+import { apiClient } from '@/lib/api';
 
 interface FAQ {
   id: number;
@@ -20,8 +20,7 @@ const FAQPage = () => {
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
-        const response = await axios.get(`${baseUrl}/consultancy/faqs/`);
+        const response = await apiClient.get('/consultancy/faqs/');
         setFaqs(response.data);
       } catch (error) {
         console.error('Error fetching FAQs:', error);
