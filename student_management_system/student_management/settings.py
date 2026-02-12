@@ -232,6 +232,10 @@ else:
 # Additional SaaS configuration
 CONTACT_RECIPIENT_EMAIL = env('CONTACT_RECIPIENT_EMAIL', default='contact@edusystem.com')
 
+# Stripe Settings
+STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='')
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='')
+STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default='')
 
 if not DEBUG and (not STRIPE_PUBLISHABLE_KEY or not STRIPE_SECRET_KEY):
     # Log a warning instead of crashing if possible, or handle it in views
