@@ -1,29 +1,38 @@
 import axios from 'axios'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://student-management-backend-8s4c.onrender.com'
-const API_ROOT = API_BASE_URL.endsWith('/') ? `${API_BASE_URL}api/` : `${API_BASE_URL}/api/`
+// Ensure API_ROOT always ends with a slash and includes 'api/'
+const API_ROOT = API_BASE_URL.endsWith('/') 
+  ? `${API_BASE_URL}api/` 
+  : `${API_BASE_URL}/api/`
+
+/**
+ * Normalizes a path to be used with apiClient.
+ * Removes leading slashes and ensures trailing slashes for Django compatibility.
+ */
+const normalizePath = (path: string) => {
+  if (path.startsWith('http')) return path;
+  
+  // Remove leading slash and redundant 'api/'
+  let cleanPath = path;
+  while (cleanPath.startsWith('/')) cleanPath = cleanPath.slice(1);
+  if (cleanPath.startsWith('api/')) cleanPath = cleanPath.slice(4);
+  while (cleanPath.startsWith('/')) cleanPath = cleanPath.slice(1);
+  
+  // Ensure trailing slash if not present and no query params
+  if (!cleanPath.endsWith('/') && !cleanPath.includes('?')) {
+    cleanPath = `${cleanPath}/`;
+  }
+  
+  return cleanPath;
+}
 
 // Helper to get consistent API URLs
 const getFullApiUrl = (path: string) => {
   if (path.startsWith('http')) return path;
-  
-  let cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  
-  // Remove redundant 'api/' if it exists
-  if (cleanPath.startsWith('api/')) {
-    cleanPath = cleanPath.slice(4);
-  }
-  
-  // Ensure the path ends with a slash for Django compatibility
-  let finalPath = cleanPath;
-  if (!finalPath.endsWith('/') && !finalPath.includes('?')) {
-    finalPath = `${finalPath}/`;
-  }
-
-  return `${API_ROOT}${finalPath}`;
+  return `${API_ROOT}${normalizePath(path)}`;
 }
 
-// Create axios instance
 export const apiClient = axios.create({
   baseURL: API_ROOT,
   timeout: 15000,
@@ -32,20 +41,60 @@ export const apiClient = axios.create({
   },
 })
 
-// Request interceptor to add auth token
+// Request Interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token')
+    if (config.url) {
+      const originalUrl = config.url;
+      config.url = normalizePath(config.url);
+      console.log(`API Request: ${originalUrl} -> ${config.baseURL}${config.url}`);
+    }
+    
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
-    }
-    // Ensure we use the full API URL if needed
-    if (config.url) {
-      config.url = getFullApiUrl(config.url);
     }
     return config
   },
   (error) => {
+    return Promise.reject(error)
+  }
+)
+
+// Response Interceptor for token refresh
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config
+    
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+      
+      const refreshToken = typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null
+      if (refreshToken) {
+        try {
+          // Use a fresh axios instance to avoid infinite loops with the interceptor
+          const response = await axios.post(`${API_ROOT}token/refresh/`, {
+            refresh: refreshToken
+          })
+          
+          const { access } = response.data
+          localStorage.setItem('access_token', access)
+          
+          // Retry original request
+          originalRequest.headers.Authorization = `Bearer ${access}`
+          return apiClient(originalRequest)
+        } catch (refreshError) {
+          // Refresh failed, logout user
+          localStorage.removeItem('access_token')
+          localStorage.removeItem('refresh_token')
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login'
+          }
+        }
+      }
+    }
+    
     return Promise.reject(error)
   }
 )

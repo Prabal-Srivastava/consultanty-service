@@ -20,7 +20,7 @@ const FAQPage = () => {
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
-        const response = await apiClient.get('/consultancy/faqs/');
+        const response = await apiClient.get('consultancy/faqs/');
         setFaqs(response.data);
       } catch (error) {
         console.error('Error fetching FAQs:', error);

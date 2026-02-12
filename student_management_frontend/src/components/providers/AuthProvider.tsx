@@ -2,7 +2,7 @@
 
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useRouter } from 'next/navigation'
-import axios from 'axios'
+import { apiClient } from '@/lib/api'
 import toast from 'react-hot-toast'
 
 export interface User {
@@ -41,79 +41,7 @@ export interface RegisterData {
 // Store auth context globally
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-// Configure axios defaults
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://student-management-backend-8s4c.onrender.com'
-const API_ROOT = API_BASE_URL.endsWith('/') ? `${API_BASE_URL}api/` : `${API_BASE_URL}/api/`
 
-// Helper to get consistent API URLs
-const getApiUrl = (path: string) => {
-  if (path.startsWith('http')) return path;
-  
-  let cleanPath = path.startsWith('/') ? path.slice(1) : path;
-  
-  // Remove redundant 'api/' if it exists
-  if (cleanPath.startsWith('api/')) {
-    cleanPath = cleanPath.slice(4);
-  }
-  
-  // Ensure the path ends with a slash for Django compatibility
-  let finalPath = cleanPath;
-  if (!finalPath.endsWith('/') && !finalPath.includes('?')) {
-    finalPath = `${finalPath}/`;
-  }
-
-  return `${API_ROOT}${finalPath}`;
-}
-
-axios.defaults.baseURL = API_ROOT
-
-// Add auth token to requests
-axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  // Ensure we use the full API URL if needed
-  if (config.url) {
-    config.url = getApiUrl(config.url);
-  }
-  return config
-})
-
-// Handle token refresh on 401
-axios.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config
-    
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true
-      
-      const refreshToken = localStorage.getItem('refresh_token')
-      if (refreshToken) {
-        try {
-          const response = await axios.post('/token/refresh/', {
-            refresh: refreshToken
-          })
-          
-          const { access } = response.data
-          localStorage.setItem('access_token', access)
-          
-          // Retry original request
-          originalRequest.headers.Authorization = `Bearer ${access}`
-          return axios(originalRequest)
-        } catch (refreshError) {
-          // Refresh failed, logout user
-          localStorage.removeItem('access_token')
-          localStorage.removeItem('refresh_token')
-          window.location.href = '/login'
-        }
-      }
-    }
-    
-    return Promise.reject(error)
-  }
-)
 
 // Provider component
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -133,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = async () => {
     try {
-      const response = await axios.get('/api/auth/profile/')
+      const response = await apiClient.get('auth/profile/')
       // Handle nested user object from ProfileSerializer
       const userData = response.data.user || response.data
       setUser(userData)
@@ -150,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (username: string, password: string) => {
     try {
       setLoading(true)
-      const response = await axios.post('/api/auth/login/', {
+      const response = await apiClient.post('auth/login/', {
         username,
         password
       })
@@ -219,7 +147,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const sendOtp = async (email: string) => {
     try {
-      const response = await axios.post('/api/auth/send-login-otp/', {
+      const response = await apiClient.post('auth/send-login-otp/', {
         email
       })
       
@@ -235,7 +163,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithOtp = async (email: string, otp: string) => {
     try {
       setLoading(true)
-      const response = await axios.post('/api/auth/verify-login-otp/', {
+      const response = await apiClient.post('auth/verify-login-otp/', {
         email,
         otp
       })
@@ -294,7 +222,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
  const register = async (userData: RegisterData) => {
     try {
       setLoading(true)
-      const response = await axios.post('/api/auth/register/', userData)
+      const response = await apiClient.post('auth/register/', userData)
       // Store email in localStorage for verification purposes
       localStorage.setItem('verificationEmail', userData.email)
       toast.success('Registration successful! Please check your email for verification.')

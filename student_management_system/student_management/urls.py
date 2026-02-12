@@ -25,12 +25,26 @@ from . import views
 handler404 = 'student_management.views.custom_404'
 
 from django.http import JsonResponse
+from django.urls import get_resolver
 
 def root_view(request):
+    # Try to list some available endpoints for debugging
+    resolver = get_resolver()
+    routes = []
+    for url_pattern in resolver.url_patterns:
+        try:
+            routes.append(str(url_pattern.pattern))
+        except:
+            pass
+            
     return JsonResponse({
         "status": "healthy",
         "message": "Student Management System API is running",
-        "environment": "development" if os.environ.get('DEBUG', 'True').lower() == 'true' else "production"
+        "environment": "production",
+        "debug_info": {
+            "available_routes_prefixes": routes[:15], # First 15 for safety
+            "request_path": request.path,
+        }
     })
 
 urlpatterns = [

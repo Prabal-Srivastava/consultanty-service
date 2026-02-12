@@ -22,7 +22,7 @@ const SuccessStories = () => {
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const response = await apiClient.get('/consultancy/success-stories/');
+        const response = await apiClient.get('consultancy/success-stories/');
         setStories(response.data);
       } catch (error) {
         console.error('Error fetching success stories:', error);

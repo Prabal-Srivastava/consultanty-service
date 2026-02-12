@@ -39,7 +39,10 @@ export async function POST(request: NextRequest) {
       finalBaseUrl = finalBaseUrl.endsWith('/') ? `${finalBaseUrl}api` : `${finalBaseUrl}/api`;
     }
     
-    const response = await fetch(`${finalBaseUrl}/consultancy/contact/`, {
+    // Ensure finalBaseUrl ends with a slash
+    const apiRoot = finalBaseUrl.endsWith('/') ? finalBaseUrl : `${finalBaseUrl}/`;
+    
+    const response = await fetch(`${apiRoot}consultancy/contact/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
