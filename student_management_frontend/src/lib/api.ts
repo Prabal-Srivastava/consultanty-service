@@ -26,7 +26,7 @@ const getFullApiUrl = (path: string) => {
 }
 
 // Create axios instance
-const apiClient = axios.create({
+export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 15000,
   headers: {
