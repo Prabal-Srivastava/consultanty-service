@@ -12,8 +12,10 @@ services:
       - key: DJANGO_SETTINGS_MODULE
         value: student_management.settings
       - key: DJANGO_SECRET_KEY
-        generateValue: true
+        value: "django-insecure-render-deployment-key-change-this-later"
       - key: DJANGO_DEBUG
-        value: false
+        value: "False"
       - key: ALLOWED_HOSTS
-        value: '*'
+        value: "*"
+      - key: DATABASE_URL
+        value: "sqlite:///db.sqlite3"
