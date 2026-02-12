@@ -55,6 +55,13 @@ const SuccessStories = () => {
             role: 'Record to Report Executive at Infosys',
             story: 'From journal entries to financial statements, the end-to-end process training made me industry-ready for my career at Infosys.',
             is_job_placement: true
+          },
+          {
+            id: 5,
+            name: 'Vikram Singh',
+            role: 'Financial Analyst at Dyson',
+            story: 'The advanced Excel and financial modeling skills I learned here were exactly what I needed to secure my role at Dyson. Truly professional training.',
+            is_job_placement: true
           }
         ]);
       } finally {
