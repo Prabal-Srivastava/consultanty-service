@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Email Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #007bff;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .token-box {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to EduSystem Pro!</h1>
+        </div>
+        
+        <div class="content">
+            <p>Hello {{ user.first_name|default:user.username }},</p>
+            
+            <p>Thank you for registering with EduSystem Pro. We're excited to have you on board!</p>
+            
+            <p>Please verify your email address to complete your registration:</p>
+            
+            <a href="{{ verification_url }}" class="button">Verify Email Address</a>
+            
+            <div class="token-box">
+                <strong>Verification Code:</strong><br>
+                {{ token }}
+            </div>
+            
+            <p><strong>Note:</strong> This verification link and code will expire in 24 hours.</p>
+            
+            <p>If you did not create an account with us, please ignore this email.</p>
+        </div>
+        
+        <div class="footer">
+            <p>&copy; 2026 EduSystem Pro. All rights reserved.</p>
+            <p>EduSystem Pro, Your Learning Partner</p>
+        </div>
+    </div>
+</body>
+</html>
