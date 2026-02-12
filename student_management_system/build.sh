@@ -4,6 +4,10 @@ set -o errexit
 
 echo "Starting build script..."
 
+# Move to the directory where build.sh is located
+cd "$(dirname "$0")"
+echo "Current directory: $(pwd)"
+
 # Install dependencies
 echo "Installing requirements..."
 pip install --upgrade pip
